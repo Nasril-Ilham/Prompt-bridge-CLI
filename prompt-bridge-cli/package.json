@@ -1,12 +1,13 @@
 {
-  "name": "dash-cli",
+  "name": "prompt-bridge-cli",
   "version": "1.0.0",
-  "description": "Dash CLI Prompter - Launcher cepat untuk AI chat",
+  "description": "PROMPT BRIDGE CLI fast and easy way to generate prompts for AI platforms",
   "main": "index.js",
   "type": "module",
   "bin": {
-    "dash": "./index.js"
-  },
+  "promptbridge": "./index.js",
+  "pb": "./index.js"
+},
   "scripts": {
     "start": "node index.js"
   },

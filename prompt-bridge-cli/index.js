@@ -2,20 +2,21 @@
 import inquirer from 'inquirer';
 import open from 'open';
 
-// Daftar URL dasar untuk masing-masing AI
 const AI_PLATFORMS = {
     'Gemini': 'https://gemini.google.com/app?prompt=', 
     'ChatGPT': 'https://chatgpt.com/?prompt=',
     'DeepSeek': 'https://chat.deepseek.com/?prompt=',
     'Claude': 'https://claude.ai/new?prompt=',
-    'Z.ai': 'https://chat.z.ai/?prompt='
+    'Z.ai': 'https://chat.z.ai/?prompt=',
+    'Grok': 'https://grok.com/?prompt=',
+    'Perplexity': 'https://www.perplexity.ai/?prompt=',
 };
 
 let currentAI = '';
 
 async function selectAI() {
     console.clear();
-    console.log('\nDash CLI -Prompter\n');
+    console.log('\nPROMPT BRIDGE CLI \n');
     
     const answer = await inquirer.prompt([
         {
@@ -34,40 +35,40 @@ async function selectAI() {
 }
 
 async function askPrompt() {
-    // Menggunakan Inquirer untuk input teks agar tidak bentrok dengan stream terminal
+    
     const answer = await inquirer.prompt([
         {
             type: 'input',
             name: 'prompt_text',
             message: `[${currentAI}]:`,
-            prefix: '' // Menghilangkan tanda '?' bawaan inquirer agar tampilan lebih bersih
+            prefix: '' 
         }
     ]);
 
     const text = answer.prompt_text.trim();
 
     if (text === '/exit' || text === 'exit') {
-        console.log('Thank you for using Dash CLI. Goodbye!');
+        console.log('\nThank you for using PROMPT BRIDGE CLI. Goodbye!');
         process.exit(0);
     } 
     else if (text === '/change' || text === 'change') {
         await selectAI();
     } 
     else if (text !== '') {
-        // URL Encoding agar aman di browser
+      
         const encodedPrompt = encodeURIComponent(text);
         const targetUrl = `${AI_PLATFORMS[currentAI]}${encodedPrompt}`;
         
-        console.log(`🌍 Membuka tab baru untuk ${currentAI}...`);
+        console.log(` Opening tab for ${currentAI}...`);
         open(targetUrl);
         
         console.log(); 
-        await askPrompt(); // Looping kembali meminta input
+        await askPrompt(); 
     } 
     else {
         await askPrompt();
     }
 }
 
-// Jalankan program
+
 selectAI();

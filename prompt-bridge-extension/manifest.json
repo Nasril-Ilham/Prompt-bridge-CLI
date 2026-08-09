@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Dash AI Bridge",
+  "name": "AI Bridge CLI",
   "version": "1.0",
   "description": "Bridge for CLI to platform AI Chat (Gemini, ChatGPT, DeepSeek, Claude, Z.ai)",
   "content_scripts": [
@@ -10,8 +10,9 @@
         "https://chatgpt.com/*",
         "https://chat.deepseek.com/*",
         "https://claude.ai/*",
-        "https://z.ai/*",
-        "https://chat.z.ai/*"
+        "https://chat.z.ai/*",
+        "https://grok.com/*",
+        "https://www.perplexity.ai/*"
       ],
       "js": ["content.js"],
       "run_at": "document_idle"
