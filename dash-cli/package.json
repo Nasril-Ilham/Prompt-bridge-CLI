@@ -1,0 +1,19 @@
+{
+  "name": "dash-cli",
+  "version": "1.0.0",
+  "description": "Dash CLI Prompter - Launcher cepat untuk AI chat",
+  "main": "index.js",
+  "type": "module",
+  "bin": {
+    "dash": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "inquirer": "^9.2.16",
+    "open": "^10.1.0"
+  },
+  "author": "Nasril Ilham",
+  "license": "MIT"
+}
