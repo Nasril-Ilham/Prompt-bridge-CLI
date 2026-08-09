@@ -34,9 +34,20 @@ function handleChatGPT(text) {
 }
 
 function handleGemini(text) {
-    waitForElement('div[contenteditable="true"]', (el) => {
+    // Perketat selektor khusus kotak input Gemini agar tidak keliru dengan elemen lain
+    const selector = 'div.ql-editor[contenteditable="true"], div[contenteditable="true"][aria-label*="Enter"], div[contenteditable="true"]';
+    
+    waitForElement(selector, (el) => {
+        // Pastikan elemen benar-benar kosong sebelum diisi untuk menghindari penumpukan teks
+        if (el.innerText && el.innerText.trim() !== "") {
+            el.innerHTML = ""; // Bersihkan jika sudah ada teks nyangkut
+        }
+
         insertTextIntoContentEditable(el, text);
-        setTimeout(() => tryClickButton('button[aria-label*="Send"], button[aria-label*="Kirim"], [data-test-id="send-button"]', el), 800);
+        
+        setTimeout(() => {
+            tryClickButton('button[aria-label*="Send"], button[aria-label*="Kirim"], [data-test-id="send-button"], button.send-button', el);
+        }, 400);
     });
 }
 
