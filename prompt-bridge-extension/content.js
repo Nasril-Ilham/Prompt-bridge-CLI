@@ -1,5 +1,5 @@
 // ==========================================
-// 1. INISIALISASI & ROUTING (VERSI AMAN ANTI-STRIP URL)
+// 1. INISIALISASI & ROUTING 
 // ==========================================
 
 const currentUrl = new URL(window.location.href);

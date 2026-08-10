@@ -47,11 +47,11 @@ async function askPrompt() {
 
     const text = answer.prompt_text.trim();
 
-    if (text === '/exit' || text === 'exit') {
+    if (text === '/exit' || text === 'exit' || text === '/EXIT' || text === 'Exit' || text === 'EXIT') {
         console.log('\nThank you for using PROMPT BRIDGE CLI. Goodbye!');
         process.exit(0);
     } 
-    else if (text === '/change' || text === 'change') {
+    else if (text === '/change' || text === 'change' || text === '/CHANGE' || text === 'Change' || text === 'CHANGE') {
         await selectAI();
     } 
     else if (text !== '') {
