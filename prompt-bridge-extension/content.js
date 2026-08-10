@@ -12,7 +12,6 @@ if (promptText) {
         const host = window.location.hostname;
         let isReady = false;
 
-        // Cek apakah elemen input dari masing-masing AI sudah muncul di layar
         if (host.includes('chatgpt.com') && document.querySelector('#prompt-textarea p, textarea')) isReady = true;
         else if (host.includes('gemini.google.com') && document.querySelector('div[contenteditable="true"]')) isReady = true;
         else if (host.includes('deepseek.com') && document.querySelector('textarea')) isReady = true;
@@ -42,7 +41,7 @@ function injectPrompt(text) {
 }
 
 // ==========================================
-// 2. HANDLER MASING-MASING AI
+// 2. HANDLER AI PLATFORM
 // ==========================================
 
 // ---- hendle chatgpt
@@ -59,13 +58,11 @@ function handleChatGPT(text) {
 // ---- hendle gemini
 
 function handleGemini(text) {
-    // Perketat selektor khusus kotak input Gemini agar tidak keliru dengan elemen lain
     const selector = 'div.ql-editor[contenteditable="true"], div[contenteditable="true"][aria-label*="Enter"], div[contenteditable="true"]';
     
     waitForElement(selector, (el) => {
-        // Pastikan elemen benar-benar kosong sebelum diisi untuk menghindari penumpukan teks
         if (el.innerText && el.innerText.trim() !== "") {
-            el.innerHTML = ""; // Bersihkan jika sudah ada teks nyangkut
+            el.innerHTML = ""; 
         }
 
         insertTextIntoContentEditable(el, text);
@@ -84,7 +81,6 @@ function handleDeepSeek(text) {
     waitForElement('textarea', (dsInput) => {
         dsInput.focus();
 
-        // 1. Set nilai menggunakan native setter agar React terbaca
         const nativeSetter = Object.getOwnPropertyDescriptor(
             window.HTMLTextAreaElement.prototype, "value"
         )?.set;
@@ -95,7 +91,6 @@ function handleDeepSeek(text) {
             dsInput.value = text;
         }
 
-        // 2. Kirim InputEvent khusus dengan data teks agar state React DeepSeek aktif
         dsInput.dispatchEvent(new InputEvent('input', { 
             bubbles: true, 
             cancelable: true, 
@@ -104,28 +99,26 @@ function handleDeepSeek(text) {
         }));
         dsInput.dispatchEvent(new Event('change', { bubbles: true }));
 
-        // 3. Beri jeda 800ms agar tombol kirim berubah status menjadi aktif (enabled)
         setTimeout(() => {
-            // Cari kontainer pembungkus input terdekat (biasanya parent atau wrapper di atas textarea)
-            const wrapper = dsInput.closest('div.chat-input, div[class*="chat"], div[class*="input"]') || dsInput.parentElement?.parentElement;
+            const wrapper = dsInput.closest('div[class*="chat-input"], div[class*="input"]') || dsInput.parentElement?.parentElement;
             
-            // Cari tombol kirim di dalam wrapper tersebut (biasanya berupa button atau div ber-role button yang memiliki SVG)
             let sendBtn = null;
             if (wrapper) {
                 const candidates = wrapper.querySelectorAll('button, div[role="button"]');
-                for (const btn of candidates) {
-                    if (btn.querySelector('svg')) {
+                for (let i = candidates.length - 1; i >= 0; i--) {
+                    const btn = candidates[i];
+                    if (btn.querySelector('svg') && !btn.querySelector('input[type="file"]')) {
                         sendBtn = btn;
                         break;
                     }
                 }
             }
 
-            // Jika belum ketemu di wrapper, cari elemen tombol universal yang memiliki SVG di area bawah
             if (!sendBtn) {
-                const allButtons = document.querySelectorAll('button, div[role="button"]');
-                for (const btn of allButtons) {
-                    if (btn.querySelector('svg') && !btn.closest('nav') && !btn.closest('header')) {
+                const allButtons = document.querySelectorAll('div[role="button"], button');
+                for (let i = allButtons.length - 1; i >= 0; i--) {
+                    const btn = allButtons[i];
+                    if (btn.querySelector('svg') && !btn.closest('nav') && !btn.closest('header') && !btn.querySelector('input[type="file"]')) {
                         sendBtn = btn;
                         break;
                     }
@@ -133,21 +126,12 @@ function handleDeepSeek(text) {
             }
 
             if (sendBtn) {
-                // Paksa hapus atribut disabled jika ada
                 sendBtn.removeAttribute('disabled');
                 sendBtn.setAttribute('aria-disabled', 'false');
+                sendBtn.classList.remove('opacity-50', 'pointer-events-none', 'disabled:opacity-50');
 
-                // Eksekusi rangkaian klik mouse lengkap untuk framework Vue/React
-                ['mousedown', 'mouseup', 'click'].forEach(eventType => {
-                    sendBtn.dispatchEvent(new MouseEvent(eventType, {
-                        bubbles: true,
-                        cancelable: true,
-                        view: window,
-                        buttons: 1
-                    }));
-                });
+                sendBtn.click();
             } else {
-                // Fallback terakhir: Tembak Enter langsung ke textarea
                 const enterEvent = new KeyboardEvent('keydown', {
                     key: 'Enter',
                     code: 'Enter',
@@ -158,8 +142,8 @@ function handleDeepSeek(text) {
                 });
                 dsInput.dispatchEvent(enterEvent);
             }
-        }, 800);
-    }, true);
+        }, 1000); 
+    });
 }
 
 function handleClaude(text) {
@@ -182,12 +166,10 @@ function handleZai(text) {
     
     if (!zaiInput) return;
     
-    // 1. Klik dan fokus dulu
     zaiInput.click();
     zaiInput.focus();
     
     setTimeout(() => {
-        // 2. Masukkan teks pakai native setter (Wajib untuk Svelte)
         const nativeSetter = Object.getOwnPropertyDescriptor(
             window.HTMLTextAreaElement.prototype, 'value'
         )?.set;
@@ -198,7 +180,6 @@ function handleZai(text) {
             zaiInput.value = text;
         }
         
-        // 3. Dispatch event input
         zaiInput.dispatchEvent(new InputEvent('input', { 
             bubbles: true, 
             cancelable: true,
@@ -207,7 +188,6 @@ function handleZai(text) {
         }));
         zaiInput.dispatchEvent(new Event('change', { bubbles: true }));
         
-        // 4. Submit
         setTimeout(() => submitZaiMessage(zaiInput), 600);
     }, 300);
 }
@@ -224,15 +204,13 @@ function submitZaiMessage(element) {
         view: window
     };
     
-    // Metode 1: Tekan Enter
     element.dispatchEvent(new KeyboardEvent('keydown', enterOpts));
     element.dispatchEvent(new KeyboardEvent('keypress', enterOpts));
     element.dispatchEvent(new KeyboardEvent('keyup', enterOpts));
     
-    // Metode 2: Kalau teks masih ada (Enter gagal), cari tombol Send
     setTimeout(() => {
         if (!element.value || element.value.trim() === '') {
-            return; // ✅ Berhasil terkirim via Enter
+            return; // 
         }
         
         const wrapper = element.closest('form') || element.parentElement?.parentElement;
@@ -268,7 +246,6 @@ function handleGrok(text) {
         document.execCommand('insertText', false, text);
         el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText' }));
         setTimeout(() => {
-            // PASTIKAN ADA TANDA TANYA DI SINI
             const submitBtn = document.querySelector('[data-testid="grokSubmitButton"]') || 
                               document.querySelector('button[aria-label*="Grok"]') || 
                               el?.parentElement?.querySelector('button');
@@ -289,13 +266,11 @@ function handleGrok(text) {
 //--- hendle perplexity
 
 function handlePerplexity(text) {
-    // 1. Targetkan GANDA: textarea (untuk beranda) DAN contenteditable (untuk halaman chat)
     const selector = 'textarea, div[contenteditable="true"], [role="textbox"][contenteditable="true"]';
     
     waitForElement(selector, (el) => {
         el.focus();
         
-        // 2. Tentukan cara injeksi berdasarkan tipe kotak inputnya
         if (el.tagName.toLowerCase() === 'textarea') {
             const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, "value").set;
             if (nativeSetter) {
@@ -307,11 +282,9 @@ function handlePerplexity(text) {
             document.execCommand('insertText', false, text);
         }
         
-        // 3. Picu reaktivitas internal Perplexity
         el.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText' }));
         el.dispatchEvent(new Event('change', { bubbles: true }));
 
-        // 4. Eksekusi tombol kirim dengan pengamanan dari "null" (ditambah jeda 600ms)
         setTimeout(() => {
             const submitBtn = document.querySelector('button[aria-label*="Submit"]') || 
                               document.querySelector('button[aria-label*="Send"]') || 
@@ -331,7 +304,7 @@ function handlePerplexity(text) {
 //--- end handle perplexity
 
 // ==========================================
-// 3. FUNGSI PENDUKUNG (CORE HELPERS)
+// 3.(CORE HELPERS)
 // ==========================================
 
 function insertTextIntoContentEditable(element, text) {
@@ -347,12 +320,10 @@ function setNativeValue(element, text) {
     } else {
         element.value = text;
     }
-    // Wajib untuk memicu reaktivitas React/Vue/Svelte
     element.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'insertText' }));
     element.dispatchEvent(new Event('change', { bubbles: true }));
 }
 
-// Fungsi helper baru yang lebih bersih untuk menekan tombol atau fallback ke Enter
 function tryClickButton(selector, inputElement) {
     const btn = document.querySelector(selector);
     if (btn && !btn.disabled && !btn.hasAttribute('aria-disabled')) {
