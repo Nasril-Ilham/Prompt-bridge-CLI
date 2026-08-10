@@ -7,7 +7,7 @@ const AI_PLATFORMS = {
     'ChatGPT': 'https://chatgpt.com/?prompt=',
     'DeepSeek': 'https://chat.deepseek.com/?prompt=',
     'Claude': 'https://claude.ai/new?prompt=',
-    'Z.ai': 'https://chat.z.ai/?prompt=',
+    // 'Z.ai': 'https://chat.z.ai/?prompt=',
     'Grok': 'https://grok.com/?prompt=',
     'Perplexity': 'https://www.perplexity.ai/?prompt=',
 };

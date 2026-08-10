@@ -6,7 +6,8 @@
   "type": "module",
   "bin": {
   "promptbridge": "./index.js",
-  "pb": "./index.js"
+  "pb": "./index.js",
+  "nasril" : "./index.js"
 },
   "scripts": {
     "start": "node index.js"
