@@ -3,7 +3,7 @@
 **PROMPT BRIDGE CLI** is an open-source project that bridges the Command Line Interface (CLI) in your terminal/CMD directly with the largest free web AI platforms, including Google Gemini, DeepSeek, ChatGPT, Claude, Z.ai, Grok, and Perplexity.
 
 With this project, you no longer need to manually open browsers, navigate through tabs, or retype the same queries. Simply type a short command in your CMD, select your preferred AI, and let the system handle the automation via secure **DOM Injection**!
-
+ 
 ---
 
 ## 🔥 Key Features
