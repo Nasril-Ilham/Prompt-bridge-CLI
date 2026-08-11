@@ -19,6 +19,8 @@ if (promptText) {
         else if (host.includes('z.ai') && document.querySelector('textarea#chat-input')) isReady = true;
         else if (host.includes('grok.com') && document.querySelector('div[contenteditable="true"]')) isReady = true;
         else if (host.includes('perplexity.ai') && document.querySelector('textarea, div[contenteditable="true"]')) isReady = true;
+        else if (host.includes('chat.qwen.ai') && document.querySelector('textarea, div[contenteditable="true"]')) isReady = true;
+        else if (host.includes('google.com') && document.querySelector('textarea,#APjFqb')) isReady = true;
 
      
         if (isReady) {
@@ -38,6 +40,8 @@ function injectPrompt(text) {
     else if (host.includes('z.ai')) handleZai(text);
     else if (host.includes('grok.com')) handleGrok(text);
     else if (host.includes('perplexity.ai')) handlePerplexity(text);
+    else if (host.includes('chat.qwen.ai')) handleQwen(text);
+    else if (host.includes('google.com')) handleGoogleAI(text);
 }
 
 // ==========================================
@@ -303,6 +307,128 @@ function handlePerplexity(text) {
 }
 
 //--- end handle perplexity
+
+// --- hendle qwen
+
+function handleQwen(text) {
+    // 1. Selector spesifik dari hasil inspect kamu
+    const selector ='textarea, jsname="yZiJbe", id="APjFqb", name="q"';
+    
+    waitForElement(selector, (qwenInput) => {
+        qwenInput.click();
+        qwenInput.focus();
+
+        // 2. Set nilai menggunakan native setter agar React Qwen terbaca
+        const nativeSetter = Object.getOwnPropertyDescriptor(
+            window.HTMLTextAreaElement.prototype, "value"
+        )?.set;
+        
+        if (nativeSetter) {
+            nativeSetter.call(qwenInput, text);
+        } else {
+            qwenInput.value = text;
+        }
+
+        // 3. Picu event input agar tombol kirim menyala (opacity berubah jadi 1)
+        qwenInput.dispatchEvent(new InputEvent('input', { 
+            bubbles: true, 
+            cancelable: true, 
+            inputType: 'insertText', 
+            data: text 
+        }));
+        qwenInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+        // 4. Beri jeda 600ms agar UI Qwen pasti siap
+        setTimeout(() => {
+            // Cari tombol kirim berdasarkan class dan aria-label yang kamu kasih
+            const sendBtn = document.querySelector('button.send-button[aria-label="Send"]');
+            
+            if (sendBtn) {
+                // Klik tombolnya
+                sendBtn.click();
+            } else {
+                // Fallback terakhir: Tekan Enter
+                const enterOpts = { 
+                    bubbles: true, cancelable: true, key: 'Enter', code: 'Enter', 
+                    keyCode: 13, which: 13, charCode: 13, view: window 
+                };
+                qwenInput.dispatchEvent(new KeyboardEvent('keydown', enterOpts));
+                qwenInput.dispatchEvent(new KeyboardEvent('keypress', enterOpts));
+                qwenInput.dispatchEvent(new KeyboardEvent('keyup', enterOpts));
+            }
+        }, 600);
+    });
+}
+
+// --- end handle qwen
+
+
+// --- hendle google ai
+
+function handleGoogleAI(text) {
+    // 1. Selector spesifik dari hasil inspect kamu
+    const selector = 'textarea#APjFqb';
+    
+    waitForElement(selector, (gInput) => {
+        gInput.click();
+        gInput.focus();
+        
+        setTimeout(() => {
+            // 2. Set nilai menggunakan native setter untuk React/Framework Google
+            const nativeSetter = Object.getOwnPropertyDescriptor(
+                window.HTMLTextAreaElement.prototype, 'value'
+            )?.set;
+            
+            if (nativeSetter) {
+                nativeSetter.call(gInput, text);
+            } else {
+                gInput.value = text;
+            }
+
+            // 3. Picu InputEvent dengan data yang sangat detail
+            gInput.dispatchEvent(new InputEvent('input', { 
+                bubbles: true, 
+                cancelable: true, 
+                inputType: 'insertText', 
+                data: text,
+                view: window
+            }));
+            gInput.dispatchEvent(new Event('change', { bubbles: true }));
+
+            // 4. Beri jeda 600ms
+            setTimeout(() => {
+                // Cari tombol "Mode AI" berdasarkan jsname/class dari inspect kamu
+                const sendBtn = document.querySelector('button[jsname="B6rgad"].plR5qb.Sw4CSc') || 
+                                document.querySelector('button.plR5qb.Sw4CSc');
+                
+                if (sendBtn) {
+                    sendBtn.click();
+                } else {
+                    // === FALLBACK: Cari form pencarian Google dan submit paksa ===
+                    const form = gInput.closest('form');
+                    if (form && typeof form.requestSubmit === 'function') {
+                        // Tombol Mode AI mungkin mati, tapi form search bisa di-submit paksa!
+                        form.requestSubmit();
+                    } else if (form) {
+                        form.submit();
+                    } else {
+                        // Fallback terakhir: Tekan Enter
+                        const enterOpts = { 
+                            bubbles: true, cancelable: true, key: 'Enter', code: 'Enter', 
+                            keyCode: 13, which: 13, charCode: 13, view: window, shiftKey: false 
+                        };
+                        gInput.dispatchEvent(new KeyboardEvent('keydown', enterOpts));
+                        gInput.dispatchEvent(new KeyboardEvent('keypress', enterOpts));
+                        gInput.dispatchEvent(new KeyboardEvent('keyup', enterOpts));
+                    }
+                }
+            }, 600);
+        }, 200);
+    });
+}
+
+// --- end handle google ai
+    
 
 // ==========================================
 // 3.(CORE HELPERS)

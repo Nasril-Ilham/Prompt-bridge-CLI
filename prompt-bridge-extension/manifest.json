@@ -12,7 +12,9 @@
         "https://claude.ai/*",
         "https://chat.z.ai/*",
         "https://grok.com/*",
-        "https://www.perplexity.ai/*"
+        "https://www.perplexity.ai/*",
+        "https://chat.qwen.ai/*",
+        "https://www.google.com/webhp?prompt=*"
       ],
       "js": ["content.js"],
       "run_at": "document_start"

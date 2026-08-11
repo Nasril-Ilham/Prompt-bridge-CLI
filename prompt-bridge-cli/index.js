@@ -5,13 +5,14 @@ import open from 'open';
 import readline from 'readline';
 import chalk from 'chalk';
 
-// 1. KONFIGURASI DATA (URL DIPERBAIKI AGAR PROMPT BISA TERKIRIM)
 const AI_PLATFORMS = {
+  'Google.ai':'https://www.google.com/webhp?prompt=',
   'Gemini': 'https://gemini.google.com/app?prompt=', 
   'ChatGPT': 'https://chatgpt.com/?prompt=',
   'DeepSeek': 'https://chat.deepseek.com/?prompt=',
   'Claude': 'https://claude.ai/new?prompt=',
   'Z.ai': 'https://chat.z.ai/?prompt=',
+  'Qwen': 'https://chat.qwen.ai/?prompt=',
   'Grok': 'https://grok.com/?prompt=',
   'Perplexity': 'https://www.perplexity.ai/?prompt='
 };
@@ -27,7 +28,7 @@ const LOGO = [
 
 const CHOICES = [...Object.keys(AI_PLATFORMS), 'Exit'];
 
-// 2. FUNGSI UTILITAS TERMINAL
+
 const clearScreen = () => console.clear();
 
 const exitCLI = () => {
@@ -35,6 +36,8 @@ const exitCLI = () => {
   console.log(chalk.green('\nThank you for using BRIDGE CLI. Goodbye!'));
   process.exit(0);
 };
+
+const totalAIs = Object.keys(AI_PLATFORMS).length;
 
 function renderMenu(selectedIndex) {
   clearScreen();
@@ -44,9 +47,9 @@ function renderMenu(selectedIndex) {
   const rightPane = [
     ''.repeat(paddingtop),
     chalk.white.bold("System: ") + chalk.white("Node.js CLI v1.0.0"),
-    chalk.white.bold("AIs:    ") + chalk.white("7 Available"),
+    chalk.white.bold("AIs:    ") + chalk.white(`${totalAIs} Available`),
     chalk.white.bold("Status: ") + chalk.white("Ready to prompt!"),
-    chalk.white.bold("Cmds:   ") + chalk.white("/change, /exit"),
+    chalk.white.bold("Cmds:   ") + chalk.white("/change, /exit, change, exit"),
     chalk.white.bold("Author: ") + chalk.white("Nasril")
   ];
 
@@ -111,7 +114,6 @@ async function runCLI() {
     if (selectedAI === 'Exit') exitCLI();
 
     clearScreen();
-    // FIX: chalk.white.cyan diubah menjadi chalk.cyan agar tidak error
     console.log(chalk.green(`Active Engine: ${chalk.cyan(selectedAI)}`));
     console.log(chalk.white.bold("Type your prompt below or use operational commands.\n"));
 
@@ -138,8 +140,6 @@ async function runCLI() {
 
       if (input !== '') {
         console.log(chalk.gray(` 🚀 Launching browser tab for ${selectedAI}...`));
-        // Kode ini sekarang akan menghasilkan URL yang benar, misal: 
-        // https://gemini.google.com/app?prompt=apa+itu+ai
         await open(AI_PLATFORMS[selectedAI] + encodeURIComponent(input));
         console.log();
       } else {
