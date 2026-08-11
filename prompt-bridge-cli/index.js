@@ -5,15 +5,15 @@ import open from 'open';
 import readline from 'readline';
 import chalk from 'chalk';
 
-// 1. KONFIGURASI DATA
+// 1. KONFIGURASI DATA (URL DIPERBAIKI AGAR PROMPT BISA TERKIRIM)
 const AI_PLATFORMS = {
-  'Gemini': 'https://google.com',
-  'ChatGPT': 'https://chatgpt.com',
-  'DeepSeek': 'https://deepseek.com',
-  'Claude': 'https://claude.ai',
-  'Z.ai': 'https://z.ai',
-  'Grok': 'https://grok.com',
-  'Perplexity': 'https://perplexity.ai'
+  'Gemini': 'https://gemini.google.com/app?prompt=', 
+  'ChatGPT': 'https://chatgpt.com/?prompt=',
+  'DeepSeek': 'https://chat.deepseek.com/?prompt=',
+  'Claude': 'https://claude.ai/new?prompt=',
+  'Z.ai': 'https://chat.z.ai/?prompt=',
+  'Grok': 'https://grok.com/?prompt=',
+  'Perplexity': 'https://www.perplexity.ai/?prompt='
 };
 
 const LOGO = [
@@ -52,7 +52,6 @@ function renderMenu(selectedIndex) {
 
   const paddingSize = 65; 
 
- 
   const maxTopLines = Math.max(LOGO.length, rightPane.length);
   for (let i = 0; i < maxTopLines; i++) {
     const leftText = chalk.greenBright(LOGO[i] || "").padEnd(paddingSize);
@@ -60,11 +59,9 @@ function renderMenu(selectedIndex) {
     process.stdout.write(leftText + rightText + "\n");
   }
 
- 
   console.log(chalk.gray("\n ----------------------------------------------------"));
   console.log(chalk.white.bold("  SELECT AI PLATFORM:"));
   console.log(chalk.gray(" ----------------------------------------------------"));
-
 
   CHOICES.forEach((choice, i) => {
     if (i === selectedIndex) {
@@ -75,15 +72,12 @@ function renderMenu(selectedIndex) {
   });
 
   console.log(chalk.gray.bold("\n  [↑/↓] Move Menu  •  [Enter] Select Option"));
-  
 }
-
 
 function selectAI() {
   return new Promise((resolve) => {
     let selectedIndex = 0;
     
-  
     readline.emitKeypressEvents(process.stdin);
     if (process.stdin.isTTY) process.stdin.setRawMode(true);
     process.stdin.resume();
@@ -117,15 +111,16 @@ async function runCLI() {
     if (selectedAI === 'Exit') exitCLI();
 
     clearScreen();
-    console.log(chalk.green(`\n ✅ Active Engine: ${chalk.bold.cyan(selectedAI)}`));
-    console.log(chalk.gray(" Type your prompt below or use operational commands.\n"));
+    // FIX: chalk.white.cyan diubah menjadi chalk.cyan agar tidak error
+    console.log(chalk.green(`Active Engine: ${chalk.cyan(selectedAI)}`));
+    console.log(chalk.white.bold("Type your prompt below or use operational commands.\n"));
 
     while (true) {
       const answer = await inquirer.prompt([
         {
           type: 'input',
           name: 'text',
-          message: chalk.magenta(`[${selectedAI}] ❯ `),
+          message: chalk.white.bold(`[${selectedAI}] ❯:`),
           prefix: ''
         }
       ]);
@@ -143,6 +138,8 @@ async function runCLI() {
 
       if (input !== '') {
         console.log(chalk.gray(` 🚀 Launching browser tab for ${selectedAI}...`));
+        // Kode ini sekarang akan menghasilkan URL yang benar, misal: 
+        // https://gemini.google.com/app?prompt=apa+itu+ai
         await open(AI_PLATFORMS[selectedAI] + encodeURIComponent(input));
         console.log();
       } else {
