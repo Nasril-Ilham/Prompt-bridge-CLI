@@ -20,14 +20,17 @@ const AI_PLATFORMS = {
 const LOGO = [
   "  ____   _____   _____  _____    _____  ______ ",
   " |  _ \\ |  __ \\ |_   _||  __ \\  / ____||  ____|",
-  " | |_) || |__) |  | |  | |  | || |  __| |__   ",
+  " | |_) || |__) |  | |  | |  | || |  __|| |___  ",
   " |  _ < |  _  /   | |  | |  | || | |_ ||  __|  ",
   " | |_) || | \\ \\  _| |_ | |__| || |__| || |____ ",
   " |____/ |_|  \\_\\|_____||_____/  \\_____||______|"
 ];
 
-const CHOICES = [...Object.keys(AI_PLATFORMS), 'Exit'];
+const CHOICES = [...Object.keys(AI_PLATFORMS), 'Exit']
 
+
+
+const totalAIs = Object.keys(AI_PLATFORMS).length;
 
 const clearScreen = () => console.clear();
 
@@ -37,7 +40,6 @@ const exitCLI = () => {
   process.exit(0);
 };
 
-const totalAIs = Object.keys(AI_PLATFORMS).length;
 
 function renderMenu(selectedIndex) {
   clearScreen();
@@ -69,6 +71,8 @@ function renderMenu(selectedIndex) {
   CHOICES.forEach((choice, i) => {
     if (i === selectedIndex) {
       console.log(chalk.white.bold("   ❯ " + choice));
+    } else if (choice === 'Exit') {
+      console.log(chalk.red("     " + choice));
     } else {
       console.log("     " + choice);
     }

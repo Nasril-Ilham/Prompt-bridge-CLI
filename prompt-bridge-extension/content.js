@@ -311,14 +311,12 @@ function handlePerplexity(text) {
 // --- hendle qwen
 
 function handleQwen(text) {
-    // 1. Selector spesifik dari hasil inspect kamu
     const selector ='textarea, jsname="yZiJbe", id="APjFqb", name="q"';
     
     waitForElement(selector, (qwenInput) => {
         qwenInput.click();
         qwenInput.focus();
 
-        // 2. Set nilai menggunakan native setter agar React Qwen terbaca
         const nativeSetter = Object.getOwnPropertyDescriptor(
             window.HTMLTextAreaElement.prototype, "value"
         )?.set;
@@ -329,7 +327,6 @@ function handleQwen(text) {
             qwenInput.value = text;
         }
 
-        // 3. Picu event input agar tombol kirim menyala (opacity berubah jadi 1)
         qwenInput.dispatchEvent(new InputEvent('input', { 
             bubbles: true, 
             cancelable: true, 
@@ -337,17 +334,13 @@ function handleQwen(text) {
             data: text 
         }));
         qwenInput.dispatchEvent(new Event('change', { bubbles: true }));
-
-        // 4. Beri jeda 600ms agar UI Qwen pasti siap
         setTimeout(() => {
-            // Cari tombol kirim berdasarkan class dan aria-label yang kamu kasih
             const sendBtn = document.querySelector('button.send-button[aria-label="Send"]');
             
             if (sendBtn) {
-                // Klik tombolnya
                 sendBtn.click();
             } else {
-                // Fallback terakhir: Tekan Enter
+
                 const enterOpts = { 
                     bubbles: true, cancelable: true, key: 'Enter', code: 'Enter', 
                     keyCode: 13, which: 13, charCode: 13, view: window 
@@ -366,7 +359,6 @@ function handleQwen(text) {
 // --- hendle google ai
 
 function handleGoogleAI(text) {
-    // 1. Selector spesifik dari hasil inspect kamu
     const selector = 'textarea#APjFqb';
     
     waitForElement(selector, (gInput) => {
@@ -374,7 +366,6 @@ function handleGoogleAI(text) {
         gInput.focus();
         
         setTimeout(() => {
-            // 2. Set nilai menggunakan native setter untuk React/Framework Google
             const nativeSetter = Object.getOwnPropertyDescriptor(
                 window.HTMLTextAreaElement.prototype, 'value'
             )?.set;
@@ -385,7 +376,6 @@ function handleGoogleAI(text) {
                 gInput.value = text;
             }
 
-            // 3. Picu InputEvent dengan data yang sangat detail
             gInput.dispatchEvent(new InputEvent('input', { 
                 bubbles: true, 
                 cancelable: true, 
@@ -395,24 +385,20 @@ function handleGoogleAI(text) {
             }));
             gInput.dispatchEvent(new Event('change', { bubbles: true }));
 
-            // 4. Beri jeda 600ms
+
             setTimeout(() => {
-                // Cari tombol "Mode AI" berdasarkan jsname/class dari inspect kamu
                 const sendBtn = document.querySelector('button[jsname="B6rgad"].plR5qb.Sw4CSc') || 
                                 document.querySelector('button.plR5qb.Sw4CSc');
                 
                 if (sendBtn) {
                     sendBtn.click();
                 } else {
-                    // === FALLBACK: Cari form pencarian Google dan submit paksa ===
                     const form = gInput.closest('form');
                     if (form && typeof form.requestSubmit === 'function') {
-                        // Tombol Mode AI mungkin mati, tapi form search bisa di-submit paksa!
                         form.requestSubmit();
                     } else if (form) {
                         form.submit();
                     } else {
-                        // Fallback terakhir: Tekan Enter
                         const enterOpts = { 
                             bubbles: true, cancelable: true, key: 'Enter', code: 'Enter', 
                             keyCode: 13, which: 13, charCode: 13, view: window, shiftKey: false 
