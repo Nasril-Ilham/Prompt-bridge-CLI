@@ -424,6 +424,7 @@ function handleGoogleAI(text) {
 // --- hendle kimi
 
 function handleKimi(text) {
+    // 1. Selector spesifik dari hasil inspect (Lexical Editor)
     const selector = 'div.chat-input-editor[contenteditable="true"]';
     
     waitForElement(selector, (kimiInput) => {
@@ -431,51 +432,12 @@ function handleKimi(text) {
         kimiInput.focus();
         
         setTimeout(() => {
-            // 1. Cari tag <p> di dalam Lexical, kalau belum ada, buat baru
-            let pTag = kimiInput.querySelector('p');
-            if (!pTag) {
-                pTag = document.createElement('p');
-                pTag.appendChild(document.createElement('br')); // Lexical butuh <br> saat kosong
-                kimiInput.appendChild(pTag);
-            }
-            pTag.focus();
+            // 2. Khusus Lexical Editor, cukup pakai execCommand saja.
+            // JANGAN dispatch InputEvent lagi di sini agar teks tidak duplikat (testes).
+            document.execCommand('selectAll', false, null);
+            document.execCommand('insertText', false, text);
 
-            // 2. Buat TextNode kosong untuk ditempati cursor
-            let textNode = pTag.firstChild;
-            if (!textNode || textNode.nodeType !== Node.TEXT_NODE) {
-                textNode = document.createTextNode('');
-                pTag.replaceChild(textNode, pTag.firstChild);
-            }
-
-            // 3. Set Selection Range (Paksa cursor berada di dalam TextNode tersebut)
-            const range = document.createRange();
-            range.setStart(textNode, 0);
-            range.setEnd(textNode, 0);
-            
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-
-            // 4. KUNCI LEXICAL: Picu event 'beforeinput' dengan data teks
-            pTag.dispatchEvent(new InputEvent('beforeinput', {
-                bubbles: true,
-                cancelable: true,
-                inputType: 'insertText',
-                data: text
-            }));
-
-            // 5. Masukkan teks secara fisik ke DOM
-            textNode.data = text;
-
-            // 6. Picu event 'input' agar Vue/Lexical update state tombolnya
-            pTag.dispatchEvent(new InputEvent('input', {
-                bubbles: true,
-                cancelable: true,
-                inputType: 'insertText',
-                data: text
-            }));
-
-            // 7. Beri jeda 800ms agar Vue sempat update state tombolnya
+            // 3. Beri jeda 800ms agar Vue (framework Kimi) sempat update state tombolnya
             setTimeout(() => {
                 // Cari tombol kirim berdasarkan class dari inspect kamu
                 let sendBtn = document.querySelector('div.send-button-container');
@@ -483,8 +445,6 @@ function handleKimi(text) {
                 if (sendBtn) {
                     // a. Hapus class 'disabled' secara paksa (Vue sering pakai class ini)
                     sendBtn.classList.remove('disabled');
-                    sendBtn.removeAttribute('disabled');
-                    sendBtn.setAttribute('aria-disabled', 'false');
                     
                     // b. Klik elemennya
                     sendBtn.click();
@@ -512,7 +472,6 @@ function handleKimi(text) {
         }, 300);
     });
 }
-
 // --- end handle kimi
 
     
