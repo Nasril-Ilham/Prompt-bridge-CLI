@@ -1,118 +1,116 @@
 # PROMPT BRIDGE CLI 🚀
 
-**PROMPT BRIDGE CLI** adalah tool open-source yang menjembatani terminal/CMD kamu langsung dengan platform AI web terbesar (Google Gemini, DeepSeek, ChatGPT, Claude, Z.ai, Grok, dan Perplexity). Lupakan repot-repot membuka browser, mencari tab yang benar, atau mengetik ulang prompt yang sama. 
+**PROMPT BRIDGE CLI** is an open-source tool that bridges your terminal/CMD directly with the largest web AI platforms (Google Gemini, DeepSeek, ChatGPT, Claude, Z.ai, Grok, and Perplexity). Forget the hassle of opening a browser, finding the right tab, or retyping the same prompt.
 
-Cukup ketik perintah singkat `pb` di terminalmu, pilih AI favoritmu, dan biarkan sistem mengirimkan promptmu secara otomatis melalui *DOM Injection* yang aman! ✨
+Simply type the short command `pb` or `bridge` in your terminal, pick your favorite AI, and let the system send your prompt automatically via safe DOM Injection! ✨
 
 ---
 
-## 🖥️ Tampilan Neofetch Style
-Kami mendesain UI terminal ini dengan gaya Neofetch agar terlihat estetik, modern, dan nyaman digunakan oleh para developer.
+## 🖥️ Neofetch-Style UI
+
+We designed this terminal UI with a Neofetch style to make it aesthetic, modern, and comfortable for developers to use.
 
 ```text
-  ____   _____   _____  _____    _____  ______      System: Node.js CLI v1.0.0
+  ____   _____   _____  _____    _____  ______
 
- |  _ \ |  __ \ |_   _||  __ \  / ____||  ____|     AIs:    7 Available
- | |_) || |__) |  | |  | |  | || |  __| |__          Status: Ready to prompt!
- |  _ < |  _  /   | |  | |  | || | |_ ||  __|        Shortcut: /change, /exit, /about
- | |_) || | \ \  _| |_ | |__| || |__| || |____ 
- |____/ |_|  \\_\\|_____||_____/  \\_____||______|
+ |  _ \ |  __ \ |_   _||  __ \  / ____||  ____|
+ | |_) || |__) |  | |  | |  | || |  __|| |___
+ |  _ < |  _  /   | |  | |  | || | |_ ||  __|
+ | |_) || | \ \  _| |_ | |__| || |__| || |____
+ |____/ |_|  \_\|_____||_____/  \_____||______|
 
- ----------------------------------------------------
-  SELECT AI PLATFORM:
- ----------------------------------------------------
-   ❯ Gemini
-     ChatGPT
-     DeepSeek
-     Claude
-     Z.ai
-     Grok
-     Perplexity
-     Exit
-
-  [↑/↓] Move Menu  •  [Enter] Select Option
- ----------------------------------------------------
 ```
 
 ---
 
 ## 🔥 Key Features
 
-* **Lightning-Fast Multi-AI Access:** Jalankan perintah `pb` secara instan dari jendela CMD/Terminal mana saja.
-* **Smart URL Routing:** Mengubah input teks CMD menjadi parameter URL universal (`?prompt=...`).
-* **Anti-Reset DOM Injection:** Dilengkapi dengan *companion extension* yang menginjeksi teks langsung ke internal framework state AI (React, Vue, Svelte, Lexical), memastikan teks kamu tidak hilang saat halaman dimuat.
-* **Auto-Submit:** Script secara otomatis mendeteksi tombol submit pada masing-masing AI untuk mengeksekusi perintah tanpa perlu klik mouse.
-* **Interactive CLI:** Pengalaman terminal yang interaktif dengan deteksi panah keyboard (atas/bawah) tanpa looping muter, plus perintah custom (`/change`, `/about`, `/exit`).
+* **Lightning-Fast Multi-AI Access:** Run the `pb` / `bridge` command instantly from any CMD/Terminal window.
+* **Smart URL Routing:** Converts CMD text input into a universal URL parameter (`?prompt=...`).
+* **Anti-Reset DOM Injection:** Equipped with a companion extension that injects text directly into the AI's internal framework state (React, Vue, Svelte, Lexical), ensuring your text doesn't disappear when the page loads.
+* **Auto-Submit:** The script automatically detects the submit button on each AI platform to execute the command without needing a mouse click.
+* **Interactive CLI:** An interactive terminal experience with keyboard arrow detection (up/down) without infinite looping, plus custom commands (`/change`, `/about`, `/exit`).
 
 ---
 
 ## 🛠️ Project Structure
-Repository ini terdiri dari dua komponen utama:
-* `prompt-bridge-cli/` — Aplikasi berbasis Node.js yang berjalan di dalam CMD/Terminal kamu.
-* `prompt-bridge-extension/` — *Companion Chrome Extension* untuk manipulasi DOM di sisi browser.
+
+This repository consists of two main components:
+
+* `prompt-bridge-cli/` – The Node.js application that runs inside your CMD/Terminal.
+* `prompt-bridge-extension/` – The Companion Chrome Extension for DOM manipulation on the browser side.
 
 ---
 
 ## 🚀 Installation & Setup
 
-### Langkah 1: Install Aplikasi CLI (CMD)
-Pastikan kamu sudah menginstall Node.js di komputermu. Clone repository ini dan masuk ke direktori CLI:
+### Step 1: Install the CLI Application (CMD)
+
+Make sure you have [Node.js](https://nodejs.org) installed on your computer. Clone this repository and navigate to the CLI directory:
 
 ```bash
-git clone https://github.com/username/prompt-bridge-cli.git
+git clone https://github.com
 cd prompt-bridge-cli
 ```
 
-Install dependencies yang dibutuhkan:
+Install the required dependencies:
+
 ```bash
 npm install
 ```
 
-Daftarkan perintah global `pb` ke dalam sistem operasimu:
+Register the global commands `pb`, `bridge` & `promptbridge` to your operating system:
+
 ```bash
 npm link
 ```
 
-### Langkah 2: Install Companion Chrome Extension
-Karena platform AI secara alami mengabaikan parameter URL publik, extension ini bertindak sebagai jembatan otomatis di dalam browsermu.
+### Step 2: Install the Companion Chrome Extension
 
-1. Buka Google Chrome dan pergi ke halaman Extensions (`chrome://extensions/`).
-2. Aktifkan **Developer mode** di pojok kanan atas.
-3. Klik tombol **Load unpacked** di pojok kiri atas.
-4. Pilih folder `prompt-bridge-extension` yang ada di dalam project ini.
+Since AI platforms naturally ignore public URL parameters, this extension acts as an automated bridge within your browser.
+
+1. Open Google Chrome and go to the Extensions page (`chrome://extensions/`).
+2. Enable **Developer mode** in the top right corner.
+3. Click the **Load unpacked** button in the top left corner.
+4. Select the `prompt-bridge-extension` folder located inside this project.
 
 ---
 
 ## 🕹️ How to Use
 
-1. Buka CMD / Terminal di mana saja di komputermu.
-2. Ketik perintah shortcut:
+1. Open CMD / Terminal anywhere on your computer.
+2. Type the shortcut command:
    ```bash
    pb
+   # or
+   bridge
+   # or
+   promptbridge
    ```
-3. Gunakan tombol panah (`↑`/`↓`) pada keyboard untuk memilih platform AI yang diinginkan, lalu tekan **Enter**.
-4. Ketik promptmu saat diminta, misalnya: `what is a water molecule`.
-5. Google Chrome akan otomatis terbuka, mengarah ke situs AI yang dipilih, mengisi kotak chat, dan langsung mengeksekusinya untukmu!
+3. Use the arrow keys (`↑`/`↓`) on your keyboard to select the desired AI platform, then press **Enter**.
+4. Type your prompt when asked, for example: `what is a water molecule`.
+5. Google Chrome will automatically open, navigate to the selected AI site, fill in the chat box, and execute it for you!
 
-### Perintah CLI Tambahan:
-* `/change` - Kembali ke menu pemilihan AI.
-* `/about` - Melihat informasi lengkap tentang project.
-* `/exit` - Keluar dari aplikasi.
+### Additional CLI Commands:
+* `/change` - Return to the AI selection menu.
+* `/exit` - Exit the application.
 
 ---
 
 ## 🧠 Tech Stack & How It Works
 
-* **Node.js (readline, inquirer, open, chalk):** Menyediakan antarmuka prompt interaktif yang estetik di CMD dan meluncurkan Google Chrome dengan query yang sudah di-encode dengan aman (`encodeURIComponent`).
-* **Chrome Extension (Content Scripts):** Berjalan otomatis hanya saat mendeteksi URL AI yang membawa parameter `?prompt=`.
-* **Native JavaScript DOM Injection:** Memanfaatkan manipulasi *Main Page Context* dan `Object.getOwnPropertyDescriptor` untuk membypass *reactive state binding* dari framework web modern, memastikan teks yang diinjeksi dikenali secara native oleh web app AI.
+* **Node.js (`readline`, `inquirer`, `open`, `chalk`):** Provides an aesthetic interactive prompt interface in the CMD and launches Google Chrome with safely encoded queries (`encodeURIComponent`).
+* **Chrome Extension (Content Scripts):** Runs automatically only when it detects an AI URL carrying the `?prompt=` parameter.
+* **Native JavaScript DOM Injection:** Leverages Main Page Context manipulation and `Object.getOwnPropertyDescriptor` to bypass the reactive state binding of modern web frameworks, ensuring the injected text is natively recognized by the AI web app.
 
 ---
 
 ## 🤝 Contributing
-Kontribusi sangat diterima! Jika kamu memperhatikan perubahan pada struktur DOM dari platform AI yang menyebabkan script ini rusak, silakan buka *Pull Request* atau ajukan *Issue* di repository ini.
+
+Contributions are highly welcome! If you notice changes in the DOM structure of any AI platform that cause this script to break, feel free to open a **Pull Request** or submit an **Issue** in this repository.
 
 ---
 
 ## 📄 License
-Project ini dilisensikan di bawah [MIT License](LICENSE). Kamu bebas untuk menggunakan, memodifikasi, dan mendistribusikan ulang.
+
+This project is licensed under the [MIT License](LICENSE). You are free to use, modify, and redistribute it.
