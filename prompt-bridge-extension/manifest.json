@@ -14,7 +14,8 @@
         "https://grok.com/*",
         "https://www.perplexity.ai/*",
         "https://chat.qwen.ai/*",
-        "https://www.google.com/webhp?prompt=*"
+        "https://www.google.com/webhp?prompt=*",
+        "https://www.kimi.com/*"
       ],
       "js": ["content.js"],
       "run_at": "document_start"

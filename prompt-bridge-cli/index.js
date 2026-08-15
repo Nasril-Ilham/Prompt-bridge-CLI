@@ -13,8 +13,10 @@ const AI_PLATFORMS = {
   'Claude': 'https://claude.ai/new?prompt=',
   'Z.ai': 'https://chat.z.ai/?prompt=',
   'Qwen': 'https://chat.qwen.ai/?prompt=',
+  'kimi': 'https://www.kimi.com/?prompt=',
   'Grok': 'https://grok.com/?prompt=',
   'Perplexity': 'https://www.perplexity.ai/?prompt='
+
 };
 
 const LOGO = [

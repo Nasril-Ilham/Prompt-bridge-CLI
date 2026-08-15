@@ -7,7 +7,7 @@
   "bin": {
   "promptbridge": "./index.js",
   "pb": "./index.js",
-  "nasril" : "./index.js"
+  "bridge" : "./index.js"
 },
   "scripts": {
     "start": "node index.js"
