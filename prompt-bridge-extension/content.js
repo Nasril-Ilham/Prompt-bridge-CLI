@@ -365,7 +365,7 @@ function handleQwen(text) {
 // --- hendle google ai
 
 function handleGoogleAI(text) {
-    const selector = 'textarea#APjFqb';
+    const selector = 'textare, [jsname="yZiJbe"], [name="q"], [id="ti6dpd"]';
     
     waitForElement(selector, (gInput) => {
         gInput.click();
