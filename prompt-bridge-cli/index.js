@@ -163,13 +163,13 @@ async function runCLI() {
       }
 
       if (command === '/open' || command === 'open') {
-        console.log(chalk.gray(` 🚀 Opening ${selectedAI} dashboard (No injection)...`));
+        console.log(chalk.gray(`Opening ${selectedAI} dashboard (No injection)......`));
         
         
         const baseUrl = AI_PLATFORMS[selectedAI].split('?prompt=')[0];
         
         await open(baseUrl);
-        console.log(chalk.gray(' 💡 Halaman dashboard/history AI telah dibuka di browser.\n'));
+        console.log(chalk.gray(' Halaman dashboard/history AI telah dibuka di browser.\n'));
       } 
       // === AKHIR FITUR BARU ===
 
