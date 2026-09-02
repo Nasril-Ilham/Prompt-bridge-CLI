@@ -4,6 +4,7 @@ import inquirer from 'inquirer';
 import open from 'open';
 import readline from 'readline';
 import chalk from 'chalk';
+import { execSync } from 'child_process';
 
 const AI_PLATFORMS = {
   'Google.ai':'https://www.google.com/webhp?prompt=',
@@ -35,12 +36,16 @@ const CHOICES = [...Object.keys(AI_PLATFORMS), 'Exit']
 const totalAIs = Object.keys(AI_PLATFORMS).length;
 
 const clearScreen = () => {
-  // Simple console.clear with fallback
-  try {
-    console.clear();
-  } catch (e) {
-    // Fallback if console.clear fails
-    process.stdout.write('\n'.repeat(100));
+  // Use Windows CLS command for true screen clearing
+  if (process.platform === 'win32') {
+    try {
+      execSync('cls', { stdio: 'inherit' });
+    } catch (e) {
+      // Fallback if CLS fails
+      process.stdout.write('\x1B[2J\x1B[H');
+    }
+  } else {
+    process.stdout.write('\x1B[2J\x1B[H');
   }
 };
 
