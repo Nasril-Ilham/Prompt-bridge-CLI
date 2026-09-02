@@ -1,10 +1,8 @@
 # Dependencies
 node_modules/
-prompt-bridge-cli/node_modules/
 
-# Lock files (optional - uncomment if you want to ignore them)
-# package-lock.json
-# prompt-bridge-cli/package-lock.json
+# Lock files
+package-lock.json
 
 # Environment variables
 .env

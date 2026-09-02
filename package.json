@@ -1,6 +1,23 @@
 {
+  "name": "prompt-bridge",
+  "version": "1.0.0",
+  "description": "PROMPT BRIDGE CLI - Fast and easy way to generate prompts for AI platforms",
+  "main": "prompt-bridge-cli/index.js",
+  "type": "module",
+  "bin": {
+    "promptbridge": "./prompt-bridge-cli/index.js",
+    "pb": "./prompt-bridge-cli/index.js",
+    "bridge": "./prompt-bridge-cli/index.js"
+  },
+  "scripts": {
+    "start": "node prompt-bridge-cli/index.js",
+    "install-cli": "cd prompt-bridge-cli && npm link"
+  },
   "dependencies": {
+    "inquirer": "^9.2.16",
+    "open": "^10.1.0",
     "chalk": "^6.0.0"
-  }
+  },
+  "author": "Nasril Ilham",
+  "license": "MIT"
 }
-

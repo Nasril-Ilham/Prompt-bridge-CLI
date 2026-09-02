@@ -1,20 +1,11 @@
 {
   "name": "prompt-bridge-cli",
   "version": "1.0.0",
-  "description": "PROMPT BRIDGE CLI fast and easy way to generate prompts for AI platforms",
+  "description": "PROMPT BRIDGE CLI - CLI component for Prompt Bridge",
   "main": "index.js",
   "type": "module",
-  "bin": {
-  "promptbridge": "./index.js",
-  "pb": "./index.js",
-  "bridge" : "./index.js"
-},
   "scripts": {
     "start": "node index.js"
-  },
-  "dependencies": {
-    "inquirer": "^9.2.16",
-    "open": "^10.1.0"
   },
   "author": "Nasril Ilham",
   "license": "MIT"
