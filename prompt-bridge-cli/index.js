@@ -67,7 +67,7 @@ function renderMenu(selectedIndex) {
     chalk.white.bold("System: ") + chalk.white("Node.js CLI v1.0.0"),
     chalk.white.bold("AIs:    ") + chalk.white(`${totalAIs} Available`),
     chalk.white.bold("Status: ") + chalk.white("Ready to prompt!"),
-    chalk.white.bold("Cmds:   ") + chalk.white("/change, /exit, change, exit"),
+    chalk.white.bold("Cmds:   ") + chalk.white("/change, /open, /exit"),
     chalk.white.bold("Author: ") + chalk.white("Nasril")
   ];
 
@@ -130,14 +130,17 @@ function selectAI() {
 async function runCLI() {
   while (true) {
     const selectedAI = await selectAI();
-    
-    if (selectedAI === 'Exit') exitCLI();
+
+    if (selectedAI === 'Exit') {
+      exitCLI();
+    }
 
     clearScreen();
-    console.log(chalk.green(`Active Engine: ${chalk.cyan(selectedAI)}`));
-    console.log(chalk.white.bold("Type your prompt below or use operational commands.\n"));
+    console.log(chalk.white.bold("Type your prompt below or use operational commands."));
+    console.log(chalk.white.bold("Commands: /change (ganti AI), /open (buka dashboard AI), /exit (keluar)\n"));
 
-    while (true) {
+    let changeAI = false;
+    while (!changeAI) {
       const answer = await inquirer.prompt([
         {
           type: 'input',
@@ -155,10 +158,22 @@ async function runCLI() {
       } 
       
       if (command === '/change' || command === 'change') {
-        break; 
+        changeAI = true;
+        continue;
       }
 
-      if (input !== '') {
+      if (command === '/open' || command === 'open') {
+        console.log(chalk.gray(` 🚀 Opening ${selectedAI} dashboard (No injection)...`));
+        
+        
+        const baseUrl = AI_PLATFORMS[selectedAI].split('?prompt=')[0];
+        
+        await open(baseUrl);
+        console.log(chalk.gray(' 💡 Halaman dashboard/history AI telah dibuka di browser.\n'));
+      } 
+      // === AKHIR FITUR BARU ===
+
+      else if (input !== '') {
         console.log(chalk.gray(` 🚀 Launching browser tab for ${selectedAI}...`));
         await open(AI_PLATFORMS[selectedAI] + encodeURIComponent(input));
         console.log();
