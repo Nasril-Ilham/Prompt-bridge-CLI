@@ -34,7 +34,15 @@ const CHOICES = [...Object.keys(AI_PLATFORMS), 'Exit']
 
 const totalAIs = Object.keys(AI_PLATFORMS).length;
 
-const clearScreen = () => console.clear();
+const clearScreen = () => {
+  // Simple console.clear with fallback
+  try {
+    console.clear();
+  } catch (e) {
+    // Fallback if console.clear fails
+    process.stdout.write('\n'.repeat(100));
+  }
+};
 
 const exitCLI = () => {
   clearScreen();
@@ -44,8 +52,9 @@ const exitCLI = () => {
 
 
 function renderMenu(selectedIndex) {
+  // Clear screen first
   clearScreen();
-  
+
   const paddingtop = 2;
 
   const rightPane = [
