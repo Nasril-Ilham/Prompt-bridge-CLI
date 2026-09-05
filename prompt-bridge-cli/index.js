@@ -1,10 +1,20 @@
 #!/usr/bin/env node
 
-import inquirer from 'inquirer';
-import open from 'open';
 import readline from 'readline';
 import chalk from 'chalk';
-import { execSync } from 'child_process';
+
+let inquirerPromise;
+let openPromise;
+
+const getInquirer = () => {
+  inquirerPromise ??= import('inquirer').then(({ default: inquirer }) => inquirer);
+  return inquirerPromise;
+};
+
+const getOpen = () => {
+  openPromise ??= import('open').then(({ default: open }) => open);
+  return openPromise;
+};
 
 const AI_PLATFORMS = {
   'Google.ai':'https://www.google.com/webhp?prompt=',
@@ -36,20 +46,17 @@ const CHOICES = [...Object.keys(AI_PLATFORMS), 'Exit']
 const totalAIs = Object.keys(AI_PLATFORMS).length;
 
 const clearScreen = () => {
-  // Use Windows CLS command for true screen clearing
-  if (process.platform === 'win32') {
-    try {
-      execSync('cls', { stdio: 'inherit' });
-    } catch (e) {
-      // Fallback if CLS fails
-      process.stdout.write('\x1B[2J\x1B[H');
-    }
-  } else {
-    process.stdout.write('\x1B[2J\x1B[H');
-  }
+  process.stdout.write('\x1B[2J\x1B[H');
+};
+
+const prepareTerminal = () => {
+  // Resume the stream without consuming pending user input.
+  process.stdin.resume();
+  process.stdout.write('\x1B[2J\x1B[H\x1B[?25l');
 };
 
 const exitCLI = () => {
+  process.stdout.write('\x1B[?25h');
   clearScreen();
   console.log(chalk.green('\nThank you for using BRIDGE CLI. Goodbye!'));
   process.exit(0);
@@ -57,9 +64,6 @@ const exitCLI = () => {
 
 
 function renderMenu(selectedIndex) {
-  // Clear screen first
-  clearScreen();
-
   const paddingtop = 2;
 
   const rightPane = [
@@ -74,37 +78,42 @@ function renderMenu(selectedIndex) {
   const paddingSize = 65; 
 
   const maxTopLines = Math.max(LOGO.length, rightPane.length);
+  const output = [];
+
   for (let i = 0; i < maxTopLines; i++) {
     const leftText = chalk.greenBright(LOGO[i] || "").padEnd(paddingSize);
     const rightText = rightPane[i] || "";
-    process.stdout.write(leftText + rightText + "\n");
+    output.push(leftText + rightText);
   }
 
-  console.log(chalk.gray("\n ----------------------------------------------------"));
-  console.log(chalk.white.bold("  SELECT AI PLATFORM:"));
-  console.log(chalk.gray(" ----------------------------------------------------"));
+  output.push(
+    chalk.gray("\n ----------------------------------------------------"),
+    chalk.white.bold("  SELECT AI PLATFORM:"),
+    chalk.gray(" ----------------------------------------------------")
+  );
 
   CHOICES.forEach((choice, i) => {
     if (i === selectedIndex) {
-      console.log(chalk.white.bold("   ❯ " + choice));
+      output.push(chalk.white.bold("   ❯ " + choice));
     } else if (choice === 'Exit') {
-      console.log(chalk.red("     " + choice));
+      output.push(chalk.red("     " + choice));
     } else {
-      console.log("     " + choice);
+      output.push("     " + choice);
     }
   });
 
-  console.log(chalk.gray.bold("\n  [↑/↓] Move Menu  •  [Enter] Select Option"));
+  output.push(chalk.gray.bold("\n  [↑/↓] Move Menu  •  [Enter] Select Option"));
+  process.stdout.write('\x1B[2J\x1B[H' + output.join('\n') + '\n');
 }
 
 function selectAI() {
   return new Promise((resolve) => {
     let selectedIndex = 0;
-    
+
     readline.emitKeypressEvents(process.stdin);
     if (process.stdin.isTTY) process.stdin.setRawMode(true);
-    process.stdin.resume();
 
+    prepareTerminal();
     renderMenu(selectedIndex);
 
     const handleKeypress = (str, key) => {
@@ -117,6 +126,7 @@ function selectAI() {
       } else if (key.name === 'return') {
         process.stdin.removeListener('keypress', handleKeypress);
         if (process.stdin.isTTY) process.stdin.setRawMode(false);
+        process.stdout.write('\x1B[?25h');
         resolve(CHOICES[selectedIndex]);
       } else if (key.ctrl && key.name === 'c') {
         exitCLI();
@@ -125,6 +135,11 @@ function selectAI() {
 
     process.stdin.on('keypress', handleKeypress);
   });
+}
+
+async function openUrl(url) {
+  const open = await getOpen();
+  return open(url);
 }
 
 async function runCLI() {
@@ -141,6 +156,7 @@ async function runCLI() {
 
     let changeAI = false;
     while (!changeAI) {
+      const inquirer = await getInquirer();
       const answer = await inquirer.prompt([
         {
           type: 'input',
@@ -163,22 +179,22 @@ async function runCLI() {
       }
 
       if (command === '/open' || command === 'open') {
-        console.log(chalk.gray(`Opening ${selectedAI} dashboard (No injection)......`));
+        console.log(chalk.gray(`\nOpening ${selectedAI} dashboard (No injection)......`));
         
         
         const baseUrl = AI_PLATFORMS[selectedAI].split('?prompt=')[0];
         
-        await open(baseUrl);
-        console.log(chalk.gray(' Halaman dashboard/history AI telah dibuka di browser.\n'));
+        await openUrl(baseUrl);
+        console.log(chalk.gray(`Halaman dashboard/history AI telah dibuka di browser.\n`));
       } 
       // === AKHIR FITUR BARU ===
 
       else if (input !== '') {
-        console.log(chalk.gray(` 🚀 Launching browser tab for ${selectedAI}...`));
-        await open(AI_PLATFORMS[selectedAI] + encodeURIComponent(input));
+        console.log(chalk.gray(`  Launching browser tab for ${selectedAI}...`));
+        await openUrl(AI_PLATFORMS[selectedAI] + encodeURIComponent(input));
         console.log();
       } else {
-        console.log(chalk.red(' ⚠️ Prompt cannot be empty.\n'));
+        console.log(chalk.red('  Prompt cannot be empty.\n'));
       }
     }
   }
