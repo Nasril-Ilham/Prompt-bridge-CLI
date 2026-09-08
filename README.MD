@@ -1,6 +1,6 @@
 # PROMPT BRIDGE CLI 🚀
 
-**PROMPT BRIDGE CLI** is an open-source tool that bridges your terminal/CMD directly with the largest web AI platforms (Google Gemini, DeepSeek, ChatGPT, Claude, Z.ai, Grok, and Perplexity). Forget the hassle of opening a browser, finding the right tab, or retyping the same prompt.
+**PROMPT BRIDGE CLI** is an open-source tool that bridges your terminal/CMD directly with popular web AI platforms (Google.ai, Gemini, ChatGPT, DeepSeek, Claude, Z.ai, Qwen, Kimi, Grok, and Perplexity). Forget the hassle of opening a browser, finding the right tab, or retyping the same prompt.
 
 Simply type the short command `pb` or `bridge` in your terminal, pick your favorite AI, and let the system send your prompt automatically via safe DOM Injection! ✨
 
@@ -10,7 +10,9 @@ Simply type the short command `pb` or `bridge` in your terminal, pick your favor
 
 We designed this terminal UI with a Neofetch style to make it aesthetic, modern, and comfortable for developers to use.
 
-```text
+<div align="center">
+
+<pre>
   ____   _____   _____  _____    _____  ______
 
  |  _ \ |  __ \ |_   _||  __ \  / ____||  ____|
@@ -18,8 +20,9 @@ We designed this terminal UI with a Neofetch style to make it aesthetic, modern,
  |  _ < |  _  /   | |  | |  | || | |_ ||  __|
  | |_) || | \ \  _| |_ | |__| || |__| || |____
  |____/ |_|  \_\|_____||_____/  \_____||______|
+</pre>
 
-```
+</div>
 
 ---
 
@@ -29,7 +32,8 @@ We designed this terminal UI with a Neofetch style to make it aesthetic, modern,
 * **Smart URL Routing:** Converts CMD text input into a universal URL parameter (`?prompt=...`).
 * **Anti-Reset DOM Injection:** Equipped with a companion extension that injects text directly into the AI's internal framework state (React, Vue, Svelte, Lexical), ensuring your text doesn't disappear when the page loads.
 * **Auto-Submit:** The script automatically detects the submit button on each AI platform to execute the command without needing a mouse click.
-* **Interactive CLI:** An interactive terminal experience with keyboard arrow detection (up/down) without infinite looping, plus custom commands (`/change`, `/about`, `/exit`).
+* **Prompt History:** Stores up to 10 recent prompts locally and lets you reuse the latest 5 with `/history`.
+* **Interactive CLI:** An interactive terminal experience with keyboard arrow detection (up/down) without infinite looping, plus custom commands (`/change`, `/open`, `/history`, `/exit`).
 
 ---
 
@@ -46,11 +50,11 @@ This repository consists of two main components:
 
 ### Step 1: Install the CLI Application (CMD)
 
-Make sure you have [Node.js](https://nodejs.org) installed on your computer. Clone this repository and navigate to the CLI directory:
+Make sure you have [Node.js](https://nodejs.org) installed on your computer. Clone this repository and navigate to the project root:
 
 ```bash
-git clone https://github.com
-cd prompt-bridge-cli
+git clone <repository-url>
+cd PROMPT-BRIDGE
 ```
 
 Install the required dependencies:
@@ -93,7 +97,11 @@ Since AI platforms naturally ignore public URL parameters, this extension acts a
 
 ### Additional CLI Commands:
 * `/change` - Return to the AI selection menu.
+* `/open` - Open the selected AI's dashboard without sending a prompt.
+* `/history` - Show the 5 most recent prompts and reuse one of them.
 * `/exit` - Exit the application.
+
+Prompt history is stored locally in `prompt-bridge-cli/.history.json`. The file is ignored by Git, stores a maximum of 10 prompts, and is never included in a push.
 
 ---
 
