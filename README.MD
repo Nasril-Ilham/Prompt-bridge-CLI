@@ -99,9 +99,12 @@ Since AI platforms naturally ignore public URL parameters, this extension acts a
 * `/change` - Return to the AI selection menu.
 * `/open` - Open the selected AI's dashboard without sending a prompt.
 * `/history` - Show the 5 most recent prompts and reuse one of them.
+* `/default [Nama AI]` - Set an AI as the default and skip the selection menu on the next launch.
+* `/default reset` - Remove the default AI and show the selection menu again on the next launch.
 * `/exit` - Exit the application.
 
 Prompt history is stored locally in `prompt-bridge-cli/.history.json`. The file is ignored by Git, stores a maximum of 10 prompts, and is never included in a push.
+The default AI is stored locally in `prompt-bridge-cli/.config.json`, which is also ignored by Git.
 
 ---
 

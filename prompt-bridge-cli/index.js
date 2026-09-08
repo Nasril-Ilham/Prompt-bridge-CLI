@@ -48,6 +48,7 @@ const CHOICES = [...Object.keys(AI_PLATFORMS), 'Exit']
 
 const totalAIs = Object.keys(AI_PLATFORMS).length;
 const historyFile = path.join(path.dirname(fileURLToPath(import.meta.url)), '.history.json');
+const configFile = path.join(path.dirname(fileURLToPath(import.meta.url)), '.config.json');
 
 const clearScreen = () => {
   process.stdout.write('\x1B[2J\x1B[H');
@@ -82,6 +83,49 @@ const readHistory = () => {
 const savePromptToHistory = (prompt) => {
   const history = [prompt, ...readHistory()].slice(0, 10);
   fs.writeFileSync(historyFile, JSON.stringify(history, null, 2));
+};
+
+const readConfig = () => {
+  try {
+    const savedConfig = fs.readFileSync(configFile, 'utf8');
+    const config = JSON.parse(savedConfig);
+    return config && typeof config === 'object' && !Array.isArray(config) ? config : {};
+  } catch (error) {
+    if (error.code === 'ENOENT') {
+      const defaultConfig = {};
+      writeConfig(defaultConfig);
+      return defaultConfig;
+    }
+
+    console.error(chalk.red('Gagal membaca konfigurasi CLI.'));
+    return {};
+  }
+};
+
+const writeConfig = (config) => {
+  fs.writeFileSync(configFile, JSON.stringify(config, null, 2));
+};
+
+const getCanonicalAIName = (name) => {
+  const normalizedName = name.trim().toLowerCase();
+  return Object.keys(AI_PLATFORMS).find((aiName) => aiName.toLowerCase() === normalizedName);
+};
+
+const getDefaultAI = () => {
+  const configuredAI = readConfig().default_ai;
+  return typeof configuredAI === 'string' ? getCanonicalAIName(configuredAI) : undefined;
+};
+
+const setDefaultAI = (aiName) => {
+  const config = readConfig();
+  config.default_ai = aiName;
+  writeConfig(config);
+};
+
+const clearDefaultAI = () => {
+  const config = readConfig();
+  delete config.default_ai;
+  writeConfig(config);
 };
 
 const selectHistoryPrompt = async (inquirer) => {
@@ -129,7 +173,7 @@ function renderMenu(selectedIndex) {
     chalk.white.bold("System: ") + chalk.white("Node.js CLI v1.0.0"),
     chalk.white.bold("AIs:    ") + chalk.white(`${totalAIs} Available`),
     chalk.white.bold("Status: ") + chalk.white("Ready to prompt!"),
-    chalk.white.bold("Cmds:   ") + chalk.white("/change, /open, /exit, /history"),
+    chalk.white.bold("Cmds:   ") + chalk.white("/change, /open, /history, /default, /exit"),
     chalk.white.bold("Author: ") + chalk.white("Nasril")
   ];
 
@@ -201,8 +245,11 @@ async function openUrl(url) {
 }
 
 async function runCLI() {
+  let forceMenu = false;
+
   while (true) {
-    const selectedAI = await selectAI();
+    const selectedAI = forceMenu ? await selectAI() : getDefaultAI() || await selectAI();
+    forceMenu = false;
 
     if (selectedAI === 'Exit') {
       exitCLI();
@@ -210,7 +257,7 @@ async function runCLI() {
 
     clearScreen();
     console.log(chalk.white.bold("Type your prompt below or use operational commands."));
-    console.log(chalk.white.bold("Commands: /change (ganti AI), /open (buka dashboard AI), /history (lihat riwayat), /exit (keluar)\n"));
+    console.log(chalk.white.bold("Commands: /change, /open, /history, /default [AI], /exit\n"));
 
     let changeAI = false;
     while (!changeAI) {
@@ -232,7 +279,26 @@ async function runCLI() {
       } 
       
       if (command === '/change' || command === 'change') {
+        forceMenu = true;
         changeAI = true;
+        continue;
+      }
+
+      if (command === '/default' || command.startsWith('/default ')) {
+        const requestedAI = input.slice('/default'.length).trim();
+
+        if (requestedAI.toLowerCase() === 'reset') {
+          clearDefaultAI();
+          console.log(chalk.green('\n✅ Default AI telah dihapus. Menu pilihan akan ditampilkan kembali saat CLI dibuka.\n'));
+        } else {
+          const aiName = getCanonicalAIName(requestedAI);
+          if (!aiName) {
+            console.log(chalk.red('\n❌ AI tidak ditemukan. Pastikan nama sesuai dengan list.\n'));
+          } else {
+            setDefaultAI(aiName);
+            console.log(chalk.green(`\n✅ ${aiName} telah diset sebagai AI default. Menu akan dilewati saat CLI dibuka lagi.\n`));
+          }
+        }
         continue;
       }
 

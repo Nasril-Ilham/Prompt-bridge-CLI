@@ -9,6 +9,7 @@ package-lock.json
 .env.local
 .env.*.local
 .history.json
+.config.json
 
 # Logs
 *.log
