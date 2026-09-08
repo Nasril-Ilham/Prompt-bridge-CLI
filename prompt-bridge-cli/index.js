@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
 import readline from 'readline';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import chalk from 'chalk';
 
 let inquirerPromise;
@@ -44,6 +47,7 @@ const CHOICES = [...Object.keys(AI_PLATFORMS), 'Exit']
 
 
 const totalAIs = Object.keys(AI_PLATFORMS).length;
+const historyFile = path.join(path.dirname(fileURLToPath(import.meta.url)), '.history.json');
 
 const clearScreen = () => {
   process.stdout.write('\x1B[2J\x1B[H');
@@ -62,6 +66,60 @@ const exitCLI = () => {
   process.exit(0);
 };
 
+const readHistory = () => {
+  try {
+    const savedHistory = fs.readFileSync(historyFile, 'utf8');
+    const history = JSON.parse(savedHistory);
+    return Array.isArray(history) ? history : [];
+  } catch (error) {
+    if (error.code !== 'ENOENT') {
+      console.error(chalk.red('Gagal membaca riwayat prompt.'));
+    }
+    return [];
+  }
+};
+
+const savePromptToHistory = (prompt) => {
+  const history = [prompt, ...readHistory()].slice(0, 10);
+  fs.writeFileSync(historyFile, JSON.stringify(history, null, 2));
+};
+
+const selectHistoryPrompt = async (inquirer) => {
+  const history = readHistory().slice(0, 5);
+
+  if (history.length === 0) {
+    console.log(chalk.yellow('\nBelum ada riwayat prompt.\n'));
+    return null;
+  }
+
+  console.log(chalk.cyan('\n--- Riwayat 5 Prompt Terakhir ---'));
+  history.forEach((prompt, index) => {
+    console.log(chalk.white(`${index + 1}. ${prompt}` ));
+  });
+
+  const answer = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'selection',
+      message: chalk.white.bold('\n'+'Ketik nomor prompt (atau 0 untuk batal):'),
+      prefix: ''
+    }
+  ]);
+
+  const selection = answer.selection.trim();
+  if (selection === '0') {
+    return null;
+  }
+
+  const selectedIndex = Number(selection) - 1;
+  if (!/^\d+$/.test(selection) || selectedIndex < 0 || selectedIndex >= history.length) {
+    console.log(chalk.red('Pilihan tidak valid\n'));
+    return null;
+  }
+
+  return history[selectedIndex];
+};
+
 
 function renderMenu(selectedIndex) {
   const paddingtop = 2;
@@ -71,7 +129,7 @@ function renderMenu(selectedIndex) {
     chalk.white.bold("System: ") + chalk.white("Node.js CLI v1.0.0"),
     chalk.white.bold("AIs:    ") + chalk.white(`${totalAIs} Available`),
     chalk.white.bold("Status: ") + chalk.white("Ready to prompt!"),
-    chalk.white.bold("Cmds:   ") + chalk.white("/change, /open, /exit"),
+    chalk.white.bold("Cmds:   ") + chalk.white("/change, /open, /exit, /history"),
     chalk.white.bold("Author: ") + chalk.white("Nasril")
   ];
 
@@ -152,7 +210,7 @@ async function runCLI() {
 
     clearScreen();
     console.log(chalk.white.bold("Type your prompt below or use operational commands."));
-    console.log(chalk.white.bold("Commands: /change (ganti AI), /open (buka dashboard AI), /exit (keluar)\n"));
+    console.log(chalk.white.bold("Commands: /change (ganti AI), /open (buka dashboard AI), /history (lihat riwayat), /exit (keluar)\n"));
 
     let changeAI = false;
     while (!changeAI) {
@@ -178,6 +236,16 @@ async function runCLI() {
         continue;
       }
 
+      if (command === '/history') {
+        const historyPrompt = await selectHistoryPrompt(inquirer);
+        if (historyPrompt !== null) {
+          console.log(chalk.gray(`  Launching browser tab for ${selectedAI}...`));
+          await openUrl(AI_PLATFORMS[selectedAI] + encodeURIComponent(historyPrompt));
+          console.log();
+        }
+        continue;
+      }
+
       if (command === '/open' || command === 'open') {
         console.log(chalk.gray(`\nOpening ${selectedAI} dashboard (No injection)......`));
         
@@ -186,10 +254,11 @@ async function runCLI() {
         
         await openUrl(baseUrl);
         console.log(chalk.gray(`Halaman dashboard/history AI telah dibuka di browser.\n`));
-      } 
-      // === AKHIR FITUR BARU ===
+        continue;
+      }
 
-      else if (input !== '') {
+      if (input !== '') {
+        savePromptToHistory(input);
         console.log(chalk.gray(`  Launching browser tab for ${selectedAI}...`));
         await openUrl(AI_PLATFORMS[selectedAI] + encodeURIComponent(input));
         console.log();
