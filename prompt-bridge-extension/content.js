@@ -21,7 +21,7 @@ if (promptText) {
         else if (host.includes('perplexity.ai') && document.querySelector('textarea, div[contenteditable="true"]')) isReady = true;
         else if (host.includes('chat.qwen.ai') && document.querySelector('textarea, div[contenteditable="true"]')) isReady = true;
         else if (host.includes('google.com') && document.querySelector('textarea,#APjFqb')) isReady = true;
-        else if (host.includes('kimi.com') && document.querySelector('div.chat-input-editor')) isReady = true;
+        else if (host.includes('kimi.ai') && document.querySelector('div.chat-input-editor')) isReady = true;
 
      
         if (isReady) {
@@ -43,7 +43,7 @@ function injectPrompt(text) {
     else if (host.includes('perplexity.ai')) handlePerplexity(text);
     else if (host.includes('chat.qwen.ai')) handleQwen(text);
     else if (host.includes('google.com')) handleGoogleAI(text);
-    else if (host.includes('kimi.com')) handleKimi(text);
+    else if (host.includes('kimi.ai')) handleKimi(text);
 }
 
 // ==========================================

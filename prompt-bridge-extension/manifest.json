@@ -15,7 +15,7 @@
         "https://www.perplexity.ai/*",
         "https://chat.qwen.ai/*",
         "https://www.google.com/webhp?prompt=*",
-        "https://www.kimi.com/*"
+        "https://www.kimi.ai/*"
       ],
       "js": ["content.js"],
       "run_at": "document_start"
