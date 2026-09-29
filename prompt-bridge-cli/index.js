@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import readline from 'readline';
+import { execSync } from 'child_process';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -42,7 +43,7 @@ const LOGO = [
   " |____/ |_|  \\_\\|_____||_____/  \\_____||______|"
 ];
 
-const CHOICES = [...Object.keys(AI_PLATFORMS), 'Exit']
+const CHOICES = [...Object.keys(AI_PLATFORMS), 'Update Project', 'Exit']
 
 
 
@@ -244,6 +245,43 @@ async function openUrl(url) {
   return open(url);
 }
 
+async function updateProject() {
+  const realpath = fs.realpathSync(path.dirname(fileURLToPath(import.meta.url)));
+  const projectRoot = path.resolve(realpath, '..');
+  const execOptions = { cwd: projectRoot, stdio: 'inherit' };
+
+  console.log(chalk.cyan('\nMemperbarui project...'));
+  try {
+    console.log(chalk.gray('\n$ git fetch'));
+    execSync('git fetch', execOptions);
+
+    console.log(chalk.gray('\n$ git pull origin main'));
+    try {
+      execSync('git pull origin main', execOptions);
+    } catch (error) {
+      console.log(chalk.yellow('\n$ git pull (fallback)'));
+      execSync('git pull', execOptions);
+    }
+
+    console.log(chalk.gray('\n$ npm install'));
+    execSync('npm install', execOptions);
+
+    console.log(chalk.green('\n✅ Project berhasil diperbarui! Silakan reload extension Chrome kamu.'));
+  } catch (error) {
+    console.log(chalk.red("\n❌ Gagal update. Pastikan tidak ada file yang sedang dibuka/diedit, atau pastikan project di-clone via 'git clone'."));
+  }
+
+  const inquirer = await getInquirer();
+  await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'continue',
+      message: 'Tekan Enter untuk kembali ke menu...',
+      prefix: ''
+    }
+  ]);
+}
+
 async function runCLI() {
   let forceMenu = false;
 
@@ -253,6 +291,12 @@ async function runCLI() {
 
     if (selectedAI === 'Exit') {
       exitCLI();
+    }
+
+    if (selectedAI === 'Update Project') {
+      await updateProject();
+      forceMenu = true;
+      continue;
     }
 
     clearScreen();
